@@ -1,0 +1,6 @@
+# Tooling artifacts
+.playwright-mcp/
+
+# Interim helpers (one-off scripts used to edit the md tables)
+scripts/
+*.tsv
