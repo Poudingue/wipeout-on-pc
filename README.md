@@ -43,6 +43,7 @@ Filterable view of everything below: **[poudingue.github.io/wipeout-on-pc](https
 | File | Content |
 |------|---------|
 | [reimplementations.md](reimplementations.md) | Source ports, rewrites, decompilations, static recompilations. One game each. Includes a *parity* column (byte-exact / behaviour-exact / enhanced). |
+| [emulators.md](emulators.md) | Open-source emulators per platform, with a WipEout-specific playability rating (🏁 👍 ⚠️ ⛔ ❓) per game, verified against compat lists and recent reports. |
 | [emulator-helpers.md](emulator-helpers.md) | Things you load into an emulator to improve a game: cheats (60 fps, unlocks), pnach/RPCS3 patches, texture packs, DLC and "all content" mods. |
 | [tools.md](tools.md) | Format tools, extractors, editors, viewers, reverse-engineering documentation. |
 
@@ -68,5 +69,5 @@ who argues fair use; online without takedown since 2023. Texture packs redistrib
 
 ## Contributing
 
-PR a row in the right file. Required: link, one-line description, activity tag, legal tag with a sentence of
+PR a row in the right file. Required: link, one-line description, Signals badges, legal tag with a sentence of
 justification in *Notes*. Read the README and the release assets of a project before tagging it.

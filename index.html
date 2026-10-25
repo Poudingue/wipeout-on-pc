@@ -46,9 +46,9 @@
 <div class="wrap"><table id="t"><thead></thead><tbody></tbody></table></div>
 
 <script>
-const FILES = ['reimplementations.md', 'emulator-helpers.md', 'tools.md'];
+const FILES = ['reimplementations.md', 'emulators.md', 'emulator-helpers.md', 'tools.md'];
 const DETAIL_COLS = ['Approach', 'Type', 'What', 'Engine', 'Covers'];
-const COLS = ['Play', 'Category', 'Game', 'Project', 'Details', 'Parity', 'Signals', 'Legal', 'Notes'];
+const COLS = ['Play', 'Category', 'Game', 'Project', 'Details', 'Playability', 'Parity', 'Signals', 'Legal', 'Notes'];
 const EMOJI = /^(\p{Extended_Pictographic}|\p{Emoji_Presentation})(️)?/u;
 
 // Legend: facet -> [emoji, meaning].
@@ -76,13 +76,20 @@ const LEGEND = {
     ['🍴', 'Fork of another listed project'],
     ['👁️', 'Viewer'],
   ],
+  'Playability': [
+    ['🏁', 'Perfect: full speed, no notable glitch'],
+    ['👍', 'Playable: minor glitches or needs a setting/patch'],
+    ['⚠️', 'Serious issues: slowdowns, bugs, crashes in some modes'],
+    ['⛔', 'Unplayable: does not boot or reach races'],
+    ['❓', 'No usable evidence'],
+  ],
   'Parity': [
     ['🎯', 'Byte-exact rebuild of the original executable'],
     ['✅', 'Behaviour-exact: original code executes'],
     ['✨', 'Enhanced: behaviour deliberately changed'],
   ],
   'Play': [
-    ['🎮', 'Playable: launches a game you can play (port, rewrite, recomp, successor)'],
+    ['🎮', 'Playable: launches a game you can play (port, rewrite, recomp, successor, emulator rated 🏁/👍)'],
     ['🔧', 'Other: patch, texture pack, tool, documentation'],
   ],
   'Helper type': [
@@ -96,8 +103,8 @@ const LEGEND = {
 const COLOUR_SCOPE = { Legal: 'Legal exposure' };
 
 // Column visibility: legend blocks and filter groups follow the column they describe.
-const LEGEND_COL = { 'Legal exposure': 'Legal', Signals: 'Signals', Approach: 'Details', 'Helper type': 'Details', Parity: 'Parity', Play: 'Play' };
-const FACET_COL = { Play: 'Play', Category: 'Category', Approach: 'Details', Parity: 'Parity', AI: 'Signals', Legal: 'Legal' };
+const LEGEND_COL = { Playability: 'Playability', 'Legal exposure': 'Legal', Signals: 'Signals', Approach: 'Details', 'Helper type': 'Details', Parity: 'Parity', Play: 'Play' };
+const FACET_COL = { Playability: 'Playability', Play: 'Play', Category: 'Category', Approach: 'Details', Parity: 'Parity', AI: 'Signals', Legal: 'Legal' };
 const DEFAULT_HIDDEN = ['Category', 'Parity', 'Signals', 'Notes'];
 let hidden;
 try { hidden = new Set(JSON.parse(localStorage.getItem('wo-hidden')) || DEFAULT_HIDDEN); } catch { hidden = new Set(DEFAULT_HIDDEN); }
@@ -156,12 +163,13 @@ function parse(file, text) {
     const get = name => { const i = header.indexOf(name); return i >= 0 ? cells[i] || '' : ''; };
     const details = DETAIL_COLS.filter(c => header.includes(c)).map(get).filter(Boolean).join(' · ');
     const gs = games(get('Game') || section);
-    const playable = file.startsWith('reimplementations') && (/^(🖊|🍴|🔁|🧬)/u.test(details) || /successors/i.test(section));
+    const playable = file.startsWith('emulators') ? /^(🏁|👍)/u.test(get('Playability'))
+      : file.startsWith('reimplementations') && (/^(🖊|🍴|🔁|🧬)/u.test(details) || /successors/i.test(section));
     rows.push({
       Play: playable ? '🎮' : '🔧',
       Category: file.replace('.md', ''),
       Game: gs.join(', '), Games: gs,
-      Project: get('Project'), Details: details, Parity: get('Parity'),
+      Project: get('Project'), Details: details, Playability: get('Playability'), Parity: get('Parity'),
       Signals: get('Signals'), Legal: get('Legal'), Notes: get('Notes'),
     });
   }
@@ -171,6 +179,7 @@ function parse(file, text) {
 // Canonical game names. A row may match several (e.g. "Pure, Pulse", "all PSP").
 const GAMES = [
   ['2097 / XL', /2097|\bXL\b/i],
+  ['WipEout 64', /wipeout 64/i],
   ['Wip3out', /wip3out|wipeout 3\b/i],
   ['Fusion', /fusion/i],
   ['Pure', /\bpure\b|all PSP/i],
@@ -195,6 +204,7 @@ const FACETS = {
   Category: r => r.Category,
   Game: r => r.Games,
   Approach: r => firstEmoji(r.Details),
+  Playability: r => firstEmoji(r.Playability),
   Parity: r => firstEmoji(r.Parity),
   AI: r => r.Signals.includes('🤖') ? '🤖 AI-assisted' : 'no AI evidence',
   Legal: r => firstEmoji(r.Legal),
@@ -205,6 +215,8 @@ function buildFilters() {
   const box = document.getElementById('filters');
   for (const [name, fn] of Object.entries(FACETS)) {
     const vals = [...new Set(rows.flatMap(fn).filter(Boolean))].sort();
+    const order = (LEGEND[COLOUR_SCOPE[name] || name] || []).map(([e]) => e.replace('️', ''));
+    if (order.length) vals.sort((a, b) => (order.indexOf(a) + 1 || 99) - (order.indexOf(b) + 1 || 99));  // legend order
     if (name === 'Game') vals.sort((a, b) => (GAME_ORDER.indexOf(a) + 1 || 99) - (GAME_ORDER.indexOf(b) + 1 || 99));
     if (vals.length < 2) continue;
     active[name] = new Set();
@@ -234,7 +246,7 @@ function render() {
   document.querySelector('#t thead').innerHTML = '<tr>' + cols.map(c => `<th data-k="${c}">${c}${sortKey === c ? (sortDir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('') + '</tr>';
   document.querySelectorAll('#t th').forEach(th => th.onclick = () => { const k = th.dataset.k; sortDir = sortKey === k ? -sortDir : 1; sortKey = k; render(); });
   document.querySelector('#t tbody').innerHTML = out.map(r => '<tr>' + cols.map(c =>
-    `<td class="${['Play', 'Signals', 'Legal', 'Parity', 'Category'].includes(c) ? 'nowrap' : ''}">${md(r[c], COLOUR_SCOPE[c] || c)}</td>`).join('') + '</tr>').join('');
+    `<td class="${['Play', 'Playability', 'Signals', 'Legal', 'Parity', 'Category'].includes(c) ? 'nowrap' : ''}">${md(r[c], COLOUR_SCOPE[c] || c)}</td>`).join('') + '</tr>').join('');
   document.getElementById('count').textContent = `${out.length} / ${rows.length}`;
 }
 
