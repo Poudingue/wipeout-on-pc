@@ -15,3 +15,5 @@ Docs-only index of open-source WipEout projects, published on GitHub Pages from 
 - Changing a column or emoji means updating the README legend and the `index.html` tooltips in the same commit.
 - Gaps and to-dos go in each category file's "Gaps" section. There is no BACKLOG.md.
 - Check `index.html` over HTTP (`python -m http.server`), not `file://`, because `fetch` is blocked there.
+- Quality (💎🥇🥈🥉🚧) is the primary quality verdict: an opinionated review of the code. Signals badges are individual facts, never a quality verdict on their own, and carry no aggregate grade.
+- 🤖 marks AI-assisted repos (agent config files, AI co-author trailers, README statement). Absence means no evidence, not a guarantee.

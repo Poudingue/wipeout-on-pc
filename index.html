@@ -45,10 +45,10 @@
 <script>
 const FILES = ['reimplementations.md', 'emulator-helpers.md', 'tools.md'];
 const DETAIL_COLS = ['Approach', 'Type', 'What', 'Engine', 'Covers'];
-const COLS = ['Play', 'Category', 'Game', 'Project', 'Details', 'Parity', 'Health', 'Legal', 'Notes'];
+const COLS = ['Play', 'Category', 'Game', 'Project', 'Details', 'Parity', 'Signals', 'Legal', 'Notes'];
 const EMOJI = /^(\p{Extended_Pictographic}|\p{Emoji_Presentation})(️)?/u;
 
-// Legend: facet -> [emoji, meaning]. Health grade and Legal share colours, so each is scoped to its column.
+// Legend: facet -> [emoji, meaning].
 const LEGEND = {
   'Legal exposure': [
     ['🟢', 'Low: nothing of Sony\'s distributed or executed'],
@@ -56,18 +56,14 @@ const LEGEND = {
     ['🟠', 'Grey: redistributes transformed Sony material (leaked-source derivative, upscaled textures)'],
     ['🔴', 'High: redistributes Sony material as is (ISO, DLC, assets)'],
   ],
-  'Health grade': [
-    ['🟢', '4 to 6 badges'],
-    ['🟡', '2 or 3 badges'],
-    ['🔴', '0 or 1 badge'],
-  ],
-  'Health badges': [
+  'Signals': [
     ['🕒', 'Pushed within the last 12 months'],
     ['👥', 'At least 3 contributors'],
-    ['🚀', 'Tagged releases'],
-    ['🤖', 'CI (GitHub Actions)'],
+    ['🏷️', 'Tagged releases'],
+    ['⚙️', 'CI (GitHub Actions)'],
     ['🧪', 'Test suite present'],
     ['📜', 'Explicit SPDX licence'],
+    ['🤖', 'AI-assisted (agent config, AI co-author trailers or stated in README). No badge = no evidence, not a guarantee'],
   ],
   'Approach': [
     ['🖊️', 'Rewrite: hand-written reimplementation'],
@@ -94,7 +90,7 @@ const LEGEND = {
     ['🧰', 'Misc tool'],
   ],
 };
-const COLOUR_SCOPE = { Legal: 'Legal exposure', Health: 'Health grade' };
+const COLOUR_SCOPE = { Legal: 'Legal exposure' };
 const MEANING = {};
 for (const [facet, items] of Object.entries(LEGEND)) for (const [e, m] of items) {
   const key = e.replace('️', '');
@@ -140,7 +136,7 @@ function parse(file, text) {
       Category: file.replace('.md', ''),
       Game: gs.join(', '), Games: gs,
       Project: get('Project'), Details: details, Parity: get('Parity'),
-      Health: get('Health'), Legal: get('Legal'), Notes: get('Notes'),
+      Signals: get('Signals'), Legal: get('Legal'), Notes: get('Notes'),
     });
   }
   return rows;
@@ -174,7 +170,7 @@ const FACETS = {
   Game: r => r.Games,
   Approach: r => firstEmoji(r.Details),
   Parity: r => firstEmoji(r.Parity),
-  Health: r => firstEmoji(r.Health),
+  AI: r => r.Signals.includes('🤖') ? '🤖 AI-assisted' : 'no AI evidence',
   Legal: r => firstEmoji(r.Legal),
 };
 const active = {}; let rows = [], sortKey = null, sortDir = 1, q = '';
@@ -211,7 +207,7 @@ function render() {
   document.querySelector('#t thead').innerHTML = '<tr>' + COLS.map(c => `<th data-k="${c}">${c}${sortKey === c ? (sortDir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('') + '</tr>';
   document.querySelectorAll('#t th').forEach(th => th.onclick = () => { const k = th.dataset.k; sortDir = sortKey === k ? -sortDir : 1; sortKey = k; render(); });
   document.querySelector('#t tbody').innerHTML = out.map(r => '<tr>' + COLS.map(c =>
-    `<td class="${['Play', 'Health', 'Legal', 'Parity', 'Category'].includes(c) ? 'nowrap' : ''}">${md(r[c], COLOUR_SCOPE[c] || c)}</td>`).join('') + '</tr>').join('');
+    `<td class="${['Play', 'Signals', 'Legal', 'Parity', 'Category'].includes(c) ? 'nowrap' : ''}">${md(r[c], COLOUR_SCOPE[c] || c)}</td>`).join('') + '</tr>').join('');
   document.getElementById('count').textContent = `${out.length} / ${rows.length}`;
 }
 
