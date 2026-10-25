@@ -163,6 +163,7 @@ const GAMES = [
 const GAME_ORDER = ['WipEout (1995)', ...GAMES.map(([n]) => n)];  // chronological, then cross-cutting
 function games(text) {
   const out = GAMES.filter(([, re]) => re.test(text)).map(([n]) => n);
+  if (out.includes('Omega Collection')) out.push(...['HD / Fury', '2048'].filter(g => !out.includes(g)));  // Omega remasters HD, Fury and 2048
   return out.length ? out : (/wipeout|WO1/i.test(text) ? ['WipEout (1995)'] : [text]);
 }
 
@@ -204,7 +205,9 @@ function buildFilters() {
 function render() {
   let out = rows.filter(r => Object.entries(active).every(([k, set]) => !set.size || [FACETS[k](r)].flat().some(v => set.has(v))));
   if (q) out = out.filter(r => COLS.map(c => r[c]).join(' ').toLowerCase().includes(q));
-  if (sortKey) out = [...out].sort((a, b) => sortDir * a[sortKey].localeCompare(b[sortKey]));
+  const gameRank = r => GAME_ORDER.indexOf(r.Games[0]) + 1 || 99;  // primary game, chronological
+  const cmp = sortKey === 'Game' ? (a, b) => gameRank(a) - gameRank(b) || a.Game.localeCompare(b.Game) : (a, b) => a[sortKey].localeCompare(b[sortKey]);
+  if (sortKey) out = [...out].sort((a, b) => sortDir * cmp(a, b));
   document.querySelector('#t thead').innerHTML = '<tr>' + COLS.map(c => `<th data-k="${c}">${c}${sortKey === c ? (sortDir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('') + '</tr>';
   document.querySelectorAll('#t th').forEach(th => th.onclick = () => { const k = th.dataset.k; sortDir = sortKey === k ? -sortDir : 1; sortKey = k; render(); });
   document.querySelector('#t tbody').innerHTML = out.map(r => '<tr>' + COLS.map(c =>
