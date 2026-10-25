@@ -45,7 +45,7 @@
 <script>
 const FILES = ['reimplementations.md', 'emulator-helpers.md', 'tools.md'];
 const DETAIL_COLS = ['Approach', 'Type', 'What', 'Engine', 'Covers'];
-const COLS = ['Category', 'Game', 'Project', 'Details', 'Parity', 'Health', 'Legal', 'Notes'];
+const COLS = ['Play', 'Category', 'Game', 'Project', 'Details', 'Parity', 'Health', 'Legal', 'Notes'];
 const EMOJI = /^(\p{Extended_Pictographic}|\p{Emoji_Presentation})(️)?/u;
 
 // Legend: facet -> [emoji, meaning]. Health grade and Legal share colours, so each is scoped to its column.
@@ -81,6 +81,10 @@ const LEGEND = {
     ['🎯', 'Byte-exact rebuild of the original executable'],
     ['✅', 'Behaviour-exact: original code executes'],
     ['✨', 'Enhanced: behaviour deliberately changed'],
+  ],
+  'Play': [
+    ['🎮', 'Playable: launches a game you can play (port, rewrite, recomp, successor)'],
+    ['🔧', 'Other: patch, texture pack, tool, documentation'],
   ],
   'Helper type': [
     ['🩹', 'Cheat code, memory patch or pnach'],
@@ -130,7 +134,9 @@ function parse(file, text) {
     const get = name => { const i = header.indexOf(name); return i >= 0 ? cells[i] || '' : ''; };
     const details = DETAIL_COLS.filter(c => header.includes(c)).map(get).filter(Boolean).join(' · ');
     const gs = games(get('Game') || section);
+    const playable = file.startsWith('reimplementations') && (/^(🖊|🍴|🔁|🧬)/u.test(details) || /successors/i.test(section));
     rows.push({
+      Play: playable ? '🎮' : '🔧',
       Category: file.replace('.md', ''),
       Game: gs.join(', '), Games: gs,
       Project: get('Project'), Details: details, Parity: get('Parity'),
@@ -162,6 +168,7 @@ function games(text) {
 
 const firstEmoji = s => (s.match(EMOJI) || [''])[0].replace('️', '');
 const FACETS = {
+  Play: r => r.Play,
   Category: r => r.Category,
   Game: r => r.Games,
   Approach: r => firstEmoji(r.Details),
@@ -201,7 +208,7 @@ function render() {
   document.querySelector('#t thead').innerHTML = '<tr>' + COLS.map(c => `<th data-k="${c}">${c}${sortKey === c ? (sortDir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('') + '</tr>';
   document.querySelectorAll('#t th').forEach(th => th.onclick = () => { const k = th.dataset.k; sortDir = sortKey === k ? -sortDir : 1; sortKey = k; render(); });
   document.querySelector('#t tbody').innerHTML = out.map(r => '<tr>' + COLS.map(c =>
-    `<td class="${['Health', 'Legal', 'Parity', 'Category'].includes(c) ? 'nowrap' : ''}">${md(r[c], COLOUR_SCOPE[c] || c)}</td>`).join('') + '</tr>').join('');
+    `<td class="${['Play', 'Health', 'Legal', 'Parity', 'Category'].includes(c) ? 'nowrap' : ''}">${md(r[c], COLOUR_SCOPE[c] || c)}</td>`).join('') + '</tr>').join('');
   document.getElementById('count').textContent = `${out.length} / ${rows.length}`;
 }
 
