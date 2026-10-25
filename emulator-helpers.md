@@ -4,7 +4,7 @@ Patches, cheats, texture packs and mods you load into an emulator to alter or im
 [README.md](README.md#legend).
 
 Rule of thumb for the legal tag: a **cheat code or pnach** is a handful of addresses and values, 🟢. A **texture
-pack** is an upscale of Sony's art, a derivative work, 🟠. A **patched ISO or xdelta that embeds DLC** carries
+pack** redistributes Sony's art, upscaled, 🟠. A **patched ISO or xdelta that embeds DLC** carries
 Sony's content, 🔴, even when the repo itself holds no ISO.
 
 ## PS1 (DuckStation, Beetle PSX HW)
@@ -45,11 +45,11 @@ In-game unlock without any patch: both games have a main-menu button sequence th
 ### DLC and "all content" mods
 
 Pure's DLC packs (Classic 1-3, Delta 1-2, Gamma 1-3, Omega, promo skins) were free downloads Sony no longer hosts.
-Pulse's four packs were paid and EU-only. Neither is redistributable, which puts every "all DLC" mod in 🔴.
+Pulse's four packs were paid and EU-only. Neither is redistributable, so every "all DLC" mod is 🔴.
 
 | Project | Game | Type | Activity | Legal | Notes |
 |---------|------|------|----------|-------|-------|
-| [NR74W/WipEout-Mods](https://github.com/NR74W/WipEout-Mods), *patches* | Pure, Pulse | xdelta patches vs EU ISOs: *Pure Special Edition*, *Pulse FX350 Edition*, *WipEout Portable Collection* (both games in one ISO) | 🟢 | 🔴 embeds DLC | All DLC, everything unlocked, DLC signature check disabled, built-in 60 fps, Japanese language, Head-to-Head and Eliminator restored in Pulse, AI fixes. The de-facto community reference. Changes the game ID, so saves are incompatible. We point at it, we do not mirror it |
+| [NR74W/WipEout-Mods](https://github.com/NR74W/WipEout-Mods), *patches* | Pure, Pulse | xdelta patches vs EU ISOs: *Pure Special Edition*, *Pulse FX350 Edition*, *WipEout Portable Collection* (both games in one ISO) | 🟢 | 🔴 embeds DLC | All DLC, everything unlocked, DLC signature check disabled, built-in 60 fps, Japanese language, Head-to-Head and Eliminator restored in Pulse, AI fixes. The de-facto community reference. Changes the game ID, so saves are incompatible |
 | [PPSSPP forum: Pure DLC install](https://forums.ppsspp.org/showthread.php?tid=18516) | Pure | how-to | ⚫ | 🟢 how-to only | One top-level folder per pack under `PSP/SAVEDATA`, region must match the disc (UCUS vs UCES IDs). Says nothing about where to get the packs |
 
 ## PS3 (RPCS3)

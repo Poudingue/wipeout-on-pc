@@ -2,19 +2,19 @@
 
 A curated index of open-source projects to run, port, mod or study the **WipEout** games on PC.
 
-**Rule of the house:** we only reference projects that ship **no copyrighted game material**. Every entry expects
-you to bring your own legally dumped disc image or PKG. Projects that redistribute ISOs, extracted assets or DLC
-are pointed at, tagged 🔴, and never mirrored.
+Nothing is hosted here, only links. Every entry carries a **legal exposure** tag so you know what you are
+downloading before you click. Most projects expect you to bring your own legally dumped disc image or PKG.
 
 ## Legend
 
-**Legal exposure**
+**Legal exposure**: how much Sony material the project itself distributes or executes.
 
-| Tag | Meaning |
-|-----|---------|
-| 🟢 | Low risk. Clean-room code, tooling, cheat codes, emulators. No Sony bytes, no leaked code. |
-| 🟠 | Grey zone. Either derived from the 2022 WipEout source leak (author claims fair use, no takedown so far), or runs/recompiles the game's original executable from *your* dump (no Sony bytes distributed, but Sony code executes), or upscaled/derivative textures. |
-| 🔴 | Ships copyrighted material (ISOs, DLC content, extracted assets, patches that embed them). Listed for completeness only. |
+| Tag | Level | Meaning |
+|-----|-------|---------|
+| 🟢 | Low | Nothing of Sony's in the repo and none executed by it. Clean-room code, format tools, cheat codes, emulators. |
+| 🟡 | Moderate | Distributes nothing of Sony's, but **executes Sony's code** from your own dump: static recompilation, native-runtime ports. Also faithful recreations (fonts redrawn by hand). Untested in court. |
+| 🟠 | Grey | **Redistributes transformed Sony material**: code derived from the 2022 source leak (author claims fair use, no takedown since 2023), upscaled or repainted textures from the game. |
+| 🔴 | High | **Redistributes Sony material as is**: ISOs, DLC content, extracted assets, patches that embed them. |
 
 **Activity** (last push, as of 2026-10)
 
@@ -45,14 +45,14 @@ are pointed at, tagged 🔴, and never mirrored.
 
 ## Legal landscape in one paragraph
 
-Three tiers. **Lowest risk:** an emulator plus your own dump, format tools, cheat codes, clean-room fan code.
-**Middle:** static recompilation and native-runtime ports. They distribute no Sony bytes and regenerate the game
-code on your machine from your dump, but you still execute Sony's copyrighted code, and no court has ruled on it.
-**Grey:** wipeout-rewrite and its derivatives, which the author says "may or may not" derive from the 2022 leaked PC
-source and argues fair use; online without takedown since 2023.
-**Excluded:** anything embedding DLC, ISOs or extracted assets, however convenient.
+🟢 An emulator plus your own dump, format tools, cheat codes and clean-room fan code distribute and execute nothing
+of Sony's. 🟡 Static recompilation and native-runtime ports distribute no Sony bytes and regenerate the game code on
+your machine from your dump, but you still execute Sony's copyrighted code, and no court has ruled on it.
+🟠 wipeout-rewrite and its derivatives "may or may not" derive from the 2022 leaked PC source according to the author,
+who argues fair use; online without takedown since 2023. Texture packs redistribute Sony's art, upscaled.
+🔴 Anything embedding DLC, ISOs or extracted assets is plain redistribution, however convenient.
 
 ## Contributing
 
 PR a row in the right file. Required: link, one-line description, activity tag, legal tag with a sentence of
-justification in *Notes*. Read the README and the release assets of a project before proposing it.
+justification in *Notes*. Read the README and the release assets of a project before tagging it.

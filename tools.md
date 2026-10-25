@@ -8,7 +8,7 @@ Tools are 🟢 unless they bundle game data.
 | Project | Covers | What | Activity | Legal | Notes |
 |---------|--------|------|----------|-------|-------|
 | [PierreBelmondo/vscode-wipeout](https://github.com/PierreBelmondo/vscode-wipeout) | PSX to PS5 | VS Code extension: unpack WAD (LZSS/zlib, XTEA-encrypted DLC), WAC, PSARC, BNK (SCREAM audio to WAV); view VEXX and RCS models with animation | 🟢 | 🟢 MIT | The Swiss-army knife of the series |
-| [NR74W/WipEout-Fonts](https://github.com/NR74W/WipEout-Fonts) | all | Series fonts remade in OpenType | ⚫ archived | 🟠 derivative | |
+| [NR74W/WipEout-Fonts](https://github.com/NR74W/WipEout-Fonts) | all | Series fonts remade in OpenType | ⚫ archived | 🟡 recreation | |
 
 ## PS1 (WipEout, 2097, Wip3out)
 
