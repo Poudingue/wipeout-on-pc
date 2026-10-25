@@ -4,7 +4,7 @@ Docs-only index of open-source WipEout projects, published on GitHub Pages from 
 
 ## Layout
 
-- `README.md`: legend and index. `reimplementations.md`, `emulator-helpers.md`, `tools.md`: one table per category.
+- `README.md`: legend, Start here (canon picks), index. `reimplementations.md`, `emulators.md`, `emulator-helpers.md`, `tools.md`: tables per category.
 - The md tables are the source of truth. `index.html` fetches and parses them client-side.
 - `.nojekyll` must stay: without it Pages runs Jekyll and the raw `.md` files are not served.
 
@@ -17,3 +17,5 @@ Docs-only index of open-source WipEout projects, published on GitHub Pages from 
 - Check `index.html` over HTTP (`python -m http.server`), not `file://`, because `fetch` is blocked there.
 - Quality (💎🥇🥈🥉🚧) is the primary quality verdict: an opinionated review of the code. Signals badges are individual facts, never a quality verdict on their own, and carry no aggregate grade.
 - 🤖 marks AI-assisted repos (agent config files, AI co-author trailers, README statement). Absence means no evidence, not a guarantee.
+- ⭐ marks canon picks (1-2 go-to per game) after the Project link. Keep README "Start here" and the stars in sync.
+- Emulator rows use canonical game names in the Game cell and one Playability emoji (🏁👍⚠️⛔❓) backed by an evidence link.

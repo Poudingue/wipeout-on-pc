@@ -39,7 +39,7 @@
 </head>
 <body>
 <h1>wipeout-on-pc</h1>
-<p class="sub">Filterable view of <a href="README.md">README.md</a> and the category files. Click chips to filter, click a header to sort, hover any emoji for its meaning. Toggle columns to show more detail.</p>
+<p class="sub">Filterable view of <a href="README.md">README.md</a> and the category files. Click chips to filter, click a header to sort, hover any emoji for its meaning. Toggle columns to show more detail. <b>Quality</b> is the maintainer's opinionated code review and the primary quality verdict; Signals badges are secondary facts, never a verdict on their own.</p>
 <div class="group colbar" id="colbar"><b>Columns</b></div>
 <details class="legend" id="legend" open><summary>Legend</summary><div class="cols"></div></details>
 <div class="filters" id="filters"></div>
@@ -48,11 +48,18 @@
 <script>
 const FILES = ['reimplementations.md', 'emulators.md', 'emulator-helpers.md', 'tools.md'];
 const DETAIL_COLS = ['Approach', 'Type', 'What', 'Engine', 'Covers'];
-const COLS = ['Play', 'Category', 'Game', 'Project', 'Details', 'Playability', 'Parity', 'Signals', 'Legal', 'Notes'];
+const COLS = ['Play', 'Category', 'Game', 'Project', 'Quality', 'Details', 'Playability', 'Parity', 'Signals', 'Legal', 'Notes'];
 const EMOJI = /^(\p{Extended_Pictographic}|\p{Emoji_Presentation})(️)?/u;
 
 // Legend: facet -> [emoji, meaning].
 const LEGEND = {
+  'Quality': [
+    ['💎', 'Exemplary: model codebase, clean architecture, tests and CI (maintainer\'s opinionated review, the primary quality verdict)'],
+    ['🥇', 'Solid: well structured and maintainable, minor gaps (maintainer\'s review)'],
+    ['🥈', 'Decent: works and reads fine, real structural debt (maintainer\'s review)'],
+    ['🥉', 'Rough: works or worked, but hacks, god files, hardcoded paths (maintainer\'s review)'],
+    ['🚧', 'Prototype, stub or abandoned: not usable as a base (maintainer\'s review)'],
+  ],
   'Legal exposure': [
     ['🟢', 'Low: nothing of Sony\'s distributed or executed'],
     ['🟡', 'Moderate: executes Sony code from your own dump, distributes nothing'],
@@ -66,8 +73,7 @@ const LEGEND = {
     ['⚙️', 'CI (GitHub Actions)'],
     ['🧪', 'Test suite present'],
     ['📜', 'Explicit SPDX licence'],
-    ['🤖', 'AI-assisted (agent config, AI co-author trailers or stated in README). No badge = no evidence, not a guarantee'],
-  ],
+    ['🤖', 'AI-assisted (agent config, AI co-author trailers or stated in README). No badge = no evidence, not a guarantee'],  ],
   'Approach': [
     ['🖊️', 'Rewrite: hand-written reimplementation'],
     ['🔬', 'Decompilation: matching C source'],
@@ -75,6 +81,9 @@ const LEGEND = {
     ['🧬', 'Native runtime: PS4 binary runs on the host CPU'],
     ['🍴', 'Fork of another listed project'],
     ['👁️', 'Viewer'],
+  ],
+  'Canon': [
+    ['⭐', 'Canon: the go-to pick for this game (see README, Start here)'],
   ],
   'Playability': [
     ['🏁', 'Perfect: full speed, no notable glitch'],
@@ -103,8 +112,8 @@ const LEGEND = {
 const COLOUR_SCOPE = { Legal: 'Legal exposure' };
 
 // Column visibility: legend blocks and filter groups follow the column they describe.
-const LEGEND_COL = { Playability: 'Playability', 'Legal exposure': 'Legal', Signals: 'Signals', Approach: 'Details', 'Helper type': 'Details', Parity: 'Parity', Play: 'Play' };
-const FACET_COL = { Playability: 'Playability', Play: 'Play', Category: 'Category', Approach: 'Details', Parity: 'Parity', AI: 'Signals', Legal: 'Legal' };
+const LEGEND_COL = { Canon: 'Project', Quality: 'Quality', Playability: 'Playability', 'Legal exposure': 'Legal', Signals: 'Signals', Approach: 'Details', 'Helper type': 'Details', Parity: 'Parity', Play: 'Play' };
+const FACET_COL = { Quality: 'Quality', Playability: 'Playability', Play: 'Play', Category: 'Category', Approach: 'Details', Parity: 'Parity', AI: 'Signals', Legal: 'Legal' };
 const DEFAULT_HIDDEN = ['Category', 'Parity', 'Signals', 'Notes'];
 let hidden;
 try { hidden = new Set(JSON.parse(localStorage.getItem('wo-hidden')) || DEFAULT_HIDDEN); } catch { hidden = new Set(DEFAULT_HIDDEN); }
@@ -164,12 +173,12 @@ function parse(file, text) {
     const details = DETAIL_COLS.filter(c => header.includes(c)).map(get).filter(Boolean).join(' · ');
     const gs = games(get('Game') || section);
     const playable = file.startsWith('emulators') ? /^(🏁|👍)/u.test(get('Playability'))
-      : file.startsWith('reimplementations') && (/^(🖊|🍴|🔁|🧬)/u.test(details) || /successors/i.test(section));
+      : file.startsWith('reimplementations') && (/^(🖊|🍴|🔁|🧬)/u.test(details) || (/successors/i.test(section) && !/^–|modding/i.test(get('Engine'))));
     rows.push({
       Play: playable ? '🎮' : '🔧',
       Category: file.replace('.md', ''),
       Game: gs.join(', '), Games: gs,
-      Project: get('Project'), Details: details, Playability: get('Playability'), Parity: get('Parity'),
+      Project: get('Project'), Quality: get('Quality'), Details: details, Playability: get('Playability'), Parity: get('Parity'),
       Signals: get('Signals'), Legal: get('Legal'), Notes: get('Notes'),
     });
   }
@@ -201,8 +210,10 @@ function games(text) {
 const firstEmoji = s => (s.match(EMOJI) || [''])[0].replace('️', '');
 const FACETS = {
   Play: r => r.Play,
+  Canon: r => r.Project.includes('⭐') ? '⭐ canon' : 'other',
   Category: r => r.Category,
   Game: r => r.Games,
+  Quality: r => firstEmoji(r.Quality),
   Approach: r => firstEmoji(r.Details),
   Playability: r => firstEmoji(r.Playability),
   Parity: r => firstEmoji(r.Parity),
@@ -216,7 +227,7 @@ function buildFilters() {
   for (const [name, fn] of Object.entries(FACETS)) {
     const vals = [...new Set(rows.flatMap(fn).filter(Boolean))].sort();
     const order = (LEGEND[COLOUR_SCOPE[name] || name] || []).map(([e]) => e.replace('️', ''));
-    if (order.length) vals.sort((a, b) => (order.indexOf(a) + 1 || 99) - (order.indexOf(b) + 1 || 99));  // legend order
+    if (order.length) { const rank = v => order.findIndex(e => v.startsWith(e)) + 1 || 99; vals.sort((a, b) => rank(a) - rank(b)); }  // legend order
     if (name === 'Game') vals.sort((a, b) => (GAME_ORDER.indexOf(a) + 1 || 99) - (GAME_ORDER.indexOf(b) + 1 || 99));
     if (vals.length < 2) continue;
     active[name] = new Set();
@@ -240,7 +251,11 @@ function render() {
   let out = rows.filter(r => Object.entries(active).every(([k, set]) => !set.size || [FACETS[k](r)].flat().some(v => set.has(v))));
   if (q) out = out.filter(r => COLS.map(c => r[c]).join(' ').toLowerCase().includes(q));
   const gameRank = r => GAME_ORDER.indexOf(r.Games[0]) + 1 || 99;  // primary game, chronological
-  const cmp = sortKey === 'Game' ? (a, b) => gameRank(a) - gameRank(b) || a.Game.localeCompare(b.Game) : (a, b) => a[sortKey].localeCompare(b[sortKey]);
+  const qOrder = LEGEND.Quality.map(([e]) => e);
+  const qRank = r => qOrder.indexOf(firstEmoji(r.Quality)) + 1 || 99;  // best tier first, unreviewed last
+  const cmp = sortKey === 'Game' ? (a, b) => gameRank(a) - gameRank(b) || a.Game.localeCompare(b.Game)
+    : sortKey === 'Quality' ? (a, b) => qRank(a) - qRank(b)
+    : (a, b) => a[sortKey].localeCompare(b[sortKey]);
   if (sortKey) out = [...out].sort((a, b) => sortDir * cmp(a, b));
   const cols = COLS.filter(c => !hidden.has(c));
   document.querySelector('#t thead').innerHTML = '<tr>' + cols.map(c => `<th data-k="${c}">${c}${sortKey === c ? (sortDir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('') + '</tr>';

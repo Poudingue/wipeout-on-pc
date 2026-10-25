@@ -7,6 +7,21 @@ downloading before you click. Most projects expect you to bring your own legally
 
 ## Legend
 
+**Quality**: the maintainer's opinionated review of each repository's code (structure, genericity, build, tests,
+hygiene). This is the primary quality verdict of the index. The Signals badges below are secondary activity facts
+and never a quality verdict by themselves.
+
+| Tier | Meaning |
+|------|---------|
+| 💎 | Exemplary: a model codebase, clean architecture, tests and CI, worth learning from |
+| 🥇 | Solid: well structured and maintainable, with minor gaps (tests, CI or docs) |
+| 🥈 | Decent: works and reads fine, but carries real structural debt (monoliths, patch stacks, magic numbers) |
+| 🥉 | Rough: works or worked, but hacks, god files, hardcoded paths or committed binaries |
+| 🚧 | Prototype, stub or abandoned: not usable as a base |
+| – | Not code (data, cheats, texture pack, how-to, link page) or not reviewed |
+
+The cell reads tier first, then a one-line verdict, e.g. `🥇 lean C, clean platform split, no tests`.
+
 **Legal exposure**: how much Sony material the project itself distributes or executes.
 
 | Tag | Level | Meaning |
@@ -18,7 +33,7 @@ downloading before you click. Most projects expect you to bring your own legally
 
 **Signals**: factual badges about the repository, collected from the GitHub API on 2026-10-25. Each one is a
 single piece of information, never a quality verdict on its own: a repo untouched for years can be clean, a busy
-one can be a mess. Non-GitHub entries get `–`.
+one can be a mess. Quality (above) is the verdict. Non-GitHub entries get `–`.
 
 | Badge | Earned when |
 |-------|-------------|
@@ -40,23 +55,33 @@ one can be a mess. Non-GitHub entries get `–`.
 Filterable view of everything below: **[poudingue.github.io/wipeout-on-pc](https://poudingue.github.io/wipeout-on-pc/)**
 (a single static page that reads the markdown files, no build step).
 
+Every table has a *Quality* column right after *Project*.
+
 | File | Content |
 |------|---------|
-| [reimplementations.md](reimplementations.md) | Source ports, rewrites, decompilations, static recompilations. One game each. Includes a *parity* column (byte-exact / behaviour-exact / enhanced). |
+| [reimplementations.md](reimplementations.md) | Source ports, rewrites, decompilations, static recompilations, plus open-source spiritual successors. One game each. Includes a *parity* column (byte-exact / behaviour-exact / enhanced). |
 | [emulators.md](emulators.md) | Open-source emulators per platform, with a WipEout-specific playability rating (🏁 👍 ⚠️ ⛔ ❓) per game, verified against compat lists and recent reports. |
-| [emulator-helpers.md](emulator-helpers.md) | Things you load into an emulator to improve a game: cheats (60 fps, unlocks), pnach/RPCS3 patches, texture packs, DLC and "all content" mods. |
-| [tools.md](tools.md) | Format tools, extractors, editors, viewers, reverse-engineering documentation. |
+| [emulator-helpers.md](emulator-helpers.md) | Things you load into an emulator (or the original PC release) to improve a game: cheats (60 fps, unlocks), pnach/RPCS3/Vita patches, texture packs, DLC and "all content" mods, achievements. |
+| [tools.md](tools.md) | Format tools, extractors, editors, viewers, mod managers, reverse-engineering documentation, online-play revival infrastructure. |
 
-## Which emulator for which game
+## Start here
 
-| Game | Platform | Emulator | Notes |
-|------|----------|----------|-------|
-| WipEout, 2097/XL, Wip3out / 3 SE | PS1 | [DuckStation](https://github.com/stenzek/duckstation), Beetle PSX HW (RetroArch), [PCSX-Redux](https://github.com/grumpycoders/pcsx-redux) | Or skip the emulator: see [reimplementations.md](reimplementations.md) |
-| Fusion | PS2 | [PCSX2](https://github.com/PCSX2/pcsx2) | Use the NTSC-U disc for 60 Hz. Widescreen and no-interlace are built-in patches |
-| Pure, Pulse | PSP | [PPSSPP](https://github.com/hrydgard/ppsspp) | Both drop to 30 fps under load. Fix in [emulator-helpers.md](emulator-helpers.md) |
-| HD / Fury | PS3 | [RPCS3](https://github.com/RPCS3/rpcs3) · [wiki](https://wiki.rpcs3.net/index.php?title=WipEout_HD) | Install game updates before the Fury DLC |
-| 2048 | Vita | [Vita3K](https://github.com/Vita3K/Vita3K) · [compat](https://github.com/Vita3K/compatibility/issues/556) | Playable in recent builds, 30 fps cap patchable |
-| Omega Collection | PS4 | [shadPS4](https://github.com/shadps4-emu/shadPS4) | Or the native runtime ports in [reimplementations.md](reimplementations.md) |
+The ⭐ **canon** picks: the absolute go-to for each game, what a fan should try first. Chosen for how well they play
+today, then for code quality. Everything else, with ratings, is in the category files and the
+[filterable view](https://poudingue.github.io/wipeout-on-pc/) (Canon facet).
+
+| Game | ⭐ Canon | Why |
+|------|---------|-----|
+| WipEout (1995) | [wipeout-rewrite](https://github.com/phoboslab/wipeout-rewrite) · [DuckStation](https://github.com/stenzek/duckstation) | The native PC rewrite everyone builds on; DuckStation for the untouched original |
+| 2097 / XL | [wipeout-xl-rewrite](https://github.com/Yash-Singh1/wipeout-xl-rewrite) · [DuckStation](https://github.com/stenzek/duckstation) | Rewrite on top of a byte-exact decomp, lockstep-tested; DuckStation for the original |
+| WipEout 64 | [RMG](https://github.com/Rosalie241/RMG) | Maintained Mupen64Plus frontend, playable |
+| Wip3out / SE | [DuckStation](https://github.com/stenzek/duckstation) | Perfect in every region; add hueponik's 60 fps patches for SE (see [emulators.md](emulators.md)) |
+| Fusion | [PCSX2](https://github.com/PCSX2/pcsx2) | Perfect; NTSC-U disc for 60 Hz, built-in widescreen patch |
+| Pure | [pure-recomp](https://github.com/erreib/pure-recomp) · [PPSSPP](https://github.com/hrydgard/ppsspp) | Native recomp if you have the US v2.00 dump; PPSSPP for every other edition |
+| Pulse | [PPSSPP](https://github.com/hrydgard/ppsspp) | Playable, online through AGRF (see [tools.md](tools.md)) |
+| HD / Fury | [RPCS3](https://github.com/RPCS3/rpcs3) | Playable with the built-in high-fps and 21:9 patches |
+| 2048 | [Vita3K](https://github.com/Vita3K/Vita3K) | Playable in EU/US/Asia releases; JP still has issues |
+| Omega Collection | [shadPS4](https://github.com/shadps4-emu/shadPS4) · [wipeout_pc](https://github.com/AbdelmoumenDeghbouche/wipeout_pc) | shadPS4 plays the EU release; wipeout_pc is the most advanced native port (early, sound unfinished) |
 
 ## Legal landscape in one paragraph
 
@@ -70,4 +95,5 @@ who argues fair use; online without takedown since 2023. Texture packs redistrib
 ## Contributing
 
 PR a row in the right file. Required: link, one-line description, Signals badges, legal tag with a sentence of
-justification in *Notes*. Read the README and the release assets of a project before tagging it.
+justification in *Notes*. Read the README and the release assets of a project before tagging it. Leave *Quality*
+as `–`: the maintainer fills it in after reviewing the code.
