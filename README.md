@@ -16,15 +16,34 @@ downloading before you click. Most projects expect you to bring your own legally
 | 🟠 | Grey | **Redistributes transformed Sony material**: code derived from the 2022 source leak (author claims fair use, no takedown since 2023), upscaled or repainted textures from the game. |
 | 🔴 | High | **Redistributes Sony material as is**: ISOs, DLC content, extracted assets, patches that embed them. |
 
-**Activity** (last push, as of 2026-10)
+**Health**: how well the repository is kept, as a grade followed by the badges it earns. Activity is one signal
+among six. A repo untouched for years can still be clean, and a busy one can be a mess. Collected from the GitHub
+API on 2026-10-25; non-GitHub entries get `–`.
 
-| Tag | Meaning |
-|-----|---------|
-| 🟢 | Active: pushed within the last 3 months |
-| 🟡 | Slow: 3 to 18 months |
-| ⚫ | Dormant or archived: older than 18 months |
+| Badge | Earned when |
+|-------|-------------|
+| 🕒 | Pushed within the last 12 months |
+| 👥 | At least 3 contributors |
+| 🚀 | Has tagged releases |
+| 🤖 | Has CI (GitHub Actions workflows) |
+| 🧪 | Has a test suite (test directory or test files, vendored code excluded) |
+| 📜 | Has an explicit licence (SPDX-recognised) |
+
+| Grade | Badges |
+|-------|--------|
+| 🟢 | 4 to 6 |
+| 🟡 | 2 or 3 |
+| 🔴 | 0 or 1 |
+
+**Approach and parity** (reimplementations): 🖊️ rewrite · 🔬 decompilation · 🔁 static recompilation ·
+🧬 native runtime · 🍴 fork · 👁️ viewer · 🎯 byte-exact · ✅ behaviour-exact · ✨ enhanced.
+
+**Helper type** (emulator helpers): 🩹 cheat or patch · 🖼️ texture pack · 💿 ISO patch · 📖 how-to · 🧰 misc tool.
 
 ## Index
+
+Filterable view of everything below: **[poudingue.github.io/wipeout-on-pc](https://poudingue.github.io/wipeout-on-pc/)**
+(a single static page that reads the markdown files, no build step).
 
 | File | Content |
 |------|---------|

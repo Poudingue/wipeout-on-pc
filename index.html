@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>wipeout-on-pc</title>
+<style>
+  :root { color-scheme: light dark; --bg: #fff; --fg: #222; --muted: #666; --line: #ddd; --chip: #eee; --on: #222; --onfg: #fff; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #111; --fg: #ddd; --muted: #999; --line: #333; --chip: #222; --on: #ddd; --onfg: #111; } }
+  body { margin: 0; padding: 1rem; background: var(--bg); color: var(--fg); font: 14px/1.4 system-ui, sans-serif; }
+  h1 { font-size: 1.3rem; margin: 0 0 .25rem; }
+  p.sub { margin: 0 0 1rem; color: var(--muted); }
+  p.sub a { color: inherit; }
+  .filters { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; margin-bottom: 1rem; }
+  .group { display: flex; flex-wrap: wrap; gap: .25rem; align-items: center; }
+  .group b { margin-right: .25rem; color: var(--muted); font-weight: 600; }
+  .chip { border: 1px solid var(--line); background: var(--chip); border-radius: 1rem; padding: .1rem .6rem; cursor: pointer; user-select: none; }
+  .chip.on { background: var(--on); color: var(--onfg); border-color: var(--on); }
+  input[type=search] { padding: .3rem .6rem; border: 1px solid var(--line); border-radius: .4rem; background: var(--bg); color: var(--fg); min-width: 16rem; }
+  .count { color: var(--muted); margin-left: auto; align-self: center; }
+  .wrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { text-align: left; vertical-align: top; padding: .35rem .5rem; border-bottom: 1px solid var(--line); }
+  th { position: sticky; top: 0; background: var(--bg); cursor: pointer; white-space: nowrap; }
+  td.nowrap { white-space: nowrap; }
+  td a { color: inherit; }
+  code { font-size: .9em; background: var(--chip); padding: 0 .25em; border-radius: .2em; }
+</style>
+</head>
+<body>
+<h1>wipeout-on-pc</h1>
+<p class="sub">Filterable view of <a href="README.md">README.md</a> and the category files. Legend is in the README. Click chips to filter, click a header to sort.</p>
+<div class="filters" id="filters"></div>
+<div class="wrap"><table id="t"><thead></thead><tbody></tbody></table></div>
+
+<script>
+const FILES = ['reimplementations.md', 'emulator-helpers.md', 'tools.md'];
+const DETAIL_COLS = ['Approach', 'Type', 'What', 'Engine', 'Covers'];
+const COLS = ['Category', 'Game', 'Project', 'Details', 'Parity', 'Health', 'Legal', 'Notes'];
+const EMOJI = /^(\p{Extended_Pictographic}|\p{Emoji_Presentation})(️)?/u;
+
+const md = s => s
+  .replace(/`([^`]+)`/g, '<code>$1</code>')
+  .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+  .replace(/\*([^*]+)\*/g, '<em>$1</em>');
+
+function parse(file, text) {
+  const rows = [];
+  let section = '', header = null;
+  for (const line of text.split('\n')) {
+    if (line.startsWith('## ')) { section = line.slice(3).trim(); header = null; continue; }
+    if (!line.startsWith('|')) { header = null; continue; }
+    const cells = line.split('|').slice(1, -1).map(c => c.trim());
+    if (!header) { header = cells; continue; }
+    if (cells.every(c => /^-+$/.test(c))) continue;
+    if (!header.includes('Legal')) continue;
+    const get = name => { const i = header.indexOf(name); return i >= 0 ? cells[i] || '' : ''; };
+    const details = DETAIL_COLS.filter(c => header.includes(c)).map(get).filter(Boolean).join(' · ');
+    rows.push({
+      Category: file.replace('.md', ''),
+      Game: get('Game') || section.replace(/\s*\(.*$/, ''),
+      Project: get('Project'), Details: details, Parity: get('Parity'),
+      Health: get('Health'), Legal: get('Legal'), Notes: get('Notes'),
+    });
+  }
+  return rows;
+}
+
+const firstEmoji = s => (s.match(EMOJI) || [''])[0].replace('️', '');
+const FACETS = {
+  Category: r => r.Category,
+  Game: r => r.Game,
+  Approach: r => firstEmoji(r.Details),
+  Parity: r => firstEmoji(r.Parity),
+  Health: r => firstEmoji(r.Health),
+  Legal: r => firstEmoji(r.Legal),
+};
+const active = {}; let rows = [], sortKey = null, sortDir = 1, q = '';
+
+function buildFilters() {
+  const box = document.getElementById('filters');
+  for (const [name, fn] of Object.entries(FACETS)) {
+    const vals = [...new Set(rows.map(fn).filter(Boolean))].sort();
+    if (vals.length < 2) continue;
+    active[name] = new Set();
+    const g = document.createElement('div'); g.className = 'group';
+    g.innerHTML = `<b>${name}</b>`;
+    for (const v of vals) {
+      const c = document.createElement('span'); c.className = 'chip'; c.textContent = v;
+      c.onclick = () => { active[name].has(v) ? active[name].delete(v) : active[name].add(v); c.classList.toggle('on'); render(); };
+      g.appendChild(c);
+    }
+    box.appendChild(g);
+  }
+  const s = document.createElement('input'); s.type = 'search'; s.placeholder = 'search…';
+  s.oninput = () => { q = s.value.toLowerCase(); render(); };
+  box.appendChild(s);
+  const n = document.createElement('span'); n.className = 'count'; n.id = 'count'; box.appendChild(n);
+}
+
+function render() {
+  let out = rows.filter(r => Object.entries(active).every(([k, set]) => !set.size || set.has(FACETS[k](r))));
+  if (q) out = out.filter(r => COLS.map(c => r[c]).join(' ').toLowerCase().includes(q));
+  if (sortKey) out = [...out].sort((a, b) => sortDir * a[sortKey].localeCompare(b[sortKey]));
+  document.querySelector('#t thead').innerHTML = '<tr>' + COLS.map(c => `<th data-k="${c}">${c}${sortKey === c ? (sortDir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('') + '</tr>';
+  document.querySelectorAll('#t th').forEach(th => th.onclick = () => { const k = th.dataset.k; sortDir = sortKey === k ? -sortDir : 1; sortKey = k; render(); });
+  document.querySelector('#t tbody').innerHTML = out.map(r => '<tr>' + COLS.map(c =>
+    `<td class="${['Health', 'Legal', 'Parity', 'Category'].includes(c) ? 'nowrap' : ''}">${md(r[c])}</td>`).join('') + '</tr>').join('');
+  document.getElementById('count').textContent = `${out.length} / ${rows.length}`;
+}
+
+Promise.all(FILES.map(f => fetch(f).then(r => { if (!r.ok) throw new Error(f + ' ' + r.status); return r.text(); }).then(t => parse(f, t))))
+  .then(all => { rows = all.flat(); buildFilters(); render(); })
+  .catch(e => { document.body.insertAdjacentHTML('beforeend', `<p>Failed to load: ${e.message}. Serve over HTTP, file:// blocks fetch.</p>`); });
+</script>
+</body>
+</html>

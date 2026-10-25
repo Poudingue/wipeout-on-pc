@@ -5,20 +5,20 @@ Tools are 🟢 unless they bundle game data.
 
 ## Cross-series
 
-| Project | Covers | What | Activity | Legal | Notes |
+| Project | Covers | What | Health | Legal | Notes |
 |---------|--------|------|----------|-------|-------|
-| [PierreBelmondo/vscode-wipeout](https://github.com/PierreBelmondo/vscode-wipeout) | PSX to PS5 | VS Code extension: unpack WAD (LZSS/zlib, XTEA-encrypted DLC), WAC, PSARC, BNK (SCREAM audio to WAV); view VEXX and RCS models with animation | 🟢 | 🟢 MIT | The Swiss-army knife of the series |
-| [NR74W/WipEout-Fonts](https://github.com/NR74W/WipEout-Fonts) | all | Series fonts remade in OpenType | ⚫ archived | 🟡 recreation | |
+| [PierreBelmondo/vscode-wipeout](https://github.com/PierreBelmondo/vscode-wipeout) | PSX to PS5 | VS Code extension: unpack WAD (LZSS/zlib, XTEA-encrypted DLC), WAC, PSARC, BNK (SCREAM audio to WAV); view VEXX and RCS models with animation | 🟢 🕒🤖🧪📜 | 🟢 MIT | The Swiss-army knife of the series |
+| [NR74W/WipEout-Fonts](https://github.com/NR74W/WipEout-Fonts) | all | Series fonts remade in OpenType | 🔴 – | 🟡 recreation | |
 
 ## PS1 (WipEout, 2097, Wip3out)
 
-| Project | Covers | What | Activity | Legal | Notes |
+| Project | Covers | What | Health | Legal | Notes |
 |---------|--------|------|----------|-------|-------|
-| [phoboslab/wipeout](https://github.com/phoboslab/wipeout) | WO1, 2097 | WebGL / Three.js model and track viewer | 🟡 | 🟢 | Reads PRM, CMP, TIM, TRV/TRF directly |
-| [ficool2/wipeout_ripper](https://github.com/ficool2/wipeout_ripper) | WO1, 2097 | Texture and geometry ripper | 🟡 | 🟢 | Author flags it as early learning code |
-| [IsPeG/wip3out-showroom](https://github.com/IsPeG/wip3out-showroom) | Wip3out | Three.js ship showroom | ⚫ | 🟢 | |
-| [puargamer/Wip3out-Menu](https://github.com/puargamer/Wip3out-Menu) | Wip3out | Main menu recreation | 🟡 | 🟢 | |
-| [devhowyalike/wipeout3-react](https://github.com/devhowyalike/wipeout3-react) | Wip3out | Recreation of the 1999 Designers Republic Flash site | 🟢 | 🟢 | |
+| [phoboslab/wipeout](https://github.com/phoboslab/wipeout) | WO1, 2097 | WebGL / Three.js model and track viewer | 🔴 – | 🟢 | Reads PRM, CMP, TIM, TRV/TRF directly |
+| [ficool2/wipeout_ripper](https://github.com/ficool2/wipeout_ripper) | WO1, 2097 | Texture and geometry ripper | 🟡 🕒🚀 | 🟢 | Author flags it as early learning code |
+| [IsPeG/wip3out-showroom](https://github.com/IsPeG/wip3out-showroom) | Wip3out | Three.js ship showroom | 🔴 – | 🟢 | |
+| [puargamer/Wip3out-Menu](https://github.com/puargamer/Wip3out-Menu) | Wip3out | Main menu recreation | 🔴 🕒 | 🟢 | |
+| [devhowyalike/wipeout3-react](https://github.com/devhowyalike/wipeout3-react) | Wip3out | Recreation of the 1999 Designers Republic Flash site | 🟢 🕒🚀🤖🧪 | 🟢 | |
 
 Format notes:
 
@@ -29,17 +29,17 @@ Format notes:
 
 ## PS2 (Fusion)
 
-| Project | What | Activity | Legal | Notes |
+| Project | What | Health | Legal | Notes |
 |---------|------|----------|-------|-------|
-| [neko68k/FusionTool](https://github.com/neko68k/FusionTool) | Archive explorer and editor | ⚫ (2014) | 🟢 | |
-| [aybe/WipeoutFusion](https://github.com/aybe/WipeoutFusion) | Reverse-engineering attempt | ⚫ (2016) | 🟢 | Stub |
+| [neko68k/FusionTool](https://github.com/neko68k/FusionTool) | Archive explorer and editor | 🔴 – | 🟢 | |
+| [aybe/WipeoutFusion](https://github.com/aybe/WipeoutFusion) | Reverse-engineering attempt | 🔴 🚀 | 🟢 | Stub |
 
 ## PSP (Pure, Pulse)
 
-| Project | What | Activity | Legal | Notes |
+| Project | What | Health | Legal | Notes |
 |---------|------|----------|-------|-------|
-| [thp/wipeout-pulse-shipedit](https://gitlab.com/thp/wipeout-pulse-shipedit) ([GitHub mirror](https://github.com/CommanderCRM/wipeout-pulse-shipedit), [free fork](https://gitlab.com/tommasoclini/wipeout-pulse-shipedit-free)) | Pulse ship skin / livery editor. C + OpenGL 1.1, 256x256 PNG in and out, 16-colour quantizer, reads the `16034453` save format | 🟡 (1.0.4, 2024-11) | 🟢 | By Thomas Perl. Windows builds on [itch.io](https://thp.itch.io/shipedit) (pay what you want, source included). DLC ships need lowercase, unencrypted files next to the exe |
-| [wlfn1116/PureWADTool](https://github.com/wlfn1116/PureWADTool) | Decrypt and extract Pure `.WAD` | 🟡 | 🟢 | |
+| [thp/wipeout-pulse-shipedit](https://gitlab.com/thp/wipeout-pulse-shipedit) ([GitHub mirror](https://github.com/CommanderCRM/wipeout-pulse-shipedit), [free fork](https://gitlab.com/tommasoclini/wipeout-pulse-shipedit-free)) | Pulse ship skin / livery editor. C + OpenGL 1.1, 256x256 PNG in and out, 16-colour quantizer, reads the `16034453` save format | 🟡 👥🚀📜 | 🟢 | By Thomas Perl. Windows builds on [itch.io](https://thp.itch.io/shipedit) (pay what you want, source included). DLC ships need lowercase, unencrypted files next to the exe |
+| [wlfn1116/PureWADTool](https://github.com/wlfn1116/PureWADTool) | Decrypt and extract Pure `.WAD` | 🟡 🕒🚀 | 🟢 | |
 
 ## PS4 (Omega Collection)
 
