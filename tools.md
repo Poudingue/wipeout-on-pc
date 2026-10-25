@@ -18,7 +18,7 @@ Tools are 🟢 unless they bundle game data.
 | [ficool2/wipeout_ripper](https://github.com/ficool2/wipeout_ripper) | WO1, 2097 | Texture and geometry ripper | 🕒🏷️ | 🟢 | Author flags it as early learning code |
 | [IsPeG/wip3out-showroom](https://github.com/IsPeG/wip3out-showroom) | Wip3out | Three.js ship showroom | – | 🟢 | |
 | [puargamer/Wip3out-Menu](https://github.com/puargamer/Wip3out-Menu) | Wip3out | Main menu recreation | 🕒 | 🟢 | |
-| [devhowyalike/wipeout3-react](https://github.com/devhowyalike/wipeout3-react) | Wip3out | Recreation of the 1999 Designers Republic Flash site | 🕒🏷️⚙️🧪 | 🟢 | |
+| [devhowyalike/wipeout3-react](https://github.com/devhowyalike/wipeout3-react) | Wip3out | Recreation of the 1999 Designers Republic Flash site | 🕒🏷️⚙️🧪🤖 | 🟢 | |
 
 Format notes:
 

@@ -20,7 +20,7 @@ Sony's content, 🔴, even when the repo itself holds no ISO.
 
 | Project | Game | Type | Signals | Legal | Notes |
 |---------|------|------|----------|-------|-------|
-| [fvhcookie-bit/wipeout-fusion-arcade-settings](https://github.com/fvhcookie-bit/wipeout-fusion-arcade-settings) | Fusion | 🩹 pnach | 🕒🏷️📜 | 🟢 MIT | Adds a race set-up screen to single-player Arcade (laps, up to 16 ships, shields, AI level, respawn) and fixes the final-lap slowdown. PAL + NTSC-U, PCSX2 2.8 |
+| [fvhcookie-bit/wipeout-fusion-arcade-settings](https://github.com/fvhcookie-bit/wipeout-fusion-arcade-settings) | Fusion | 🩹 pnach | 🕒🏷️📜🤖 | 🟢 MIT | Adds a race set-up screen to single-player Arcade (laps, up to 16 ships, shields, AI level, respawn) and fixes the final-lap slowdown. PAL + NTSC-U, PCSX2 2.8 |
 | [sethvm/WipEout-Fusion-HD-Texture-Pack](https://github.com/sethvm/WipEout-Fusion-HD-Texture-Pack) | Fusion | 🖼️ texture pack | – | 🟠 derivative | |
 | PCSX2 built-in | Fusion | widescreen 16:9, no-interlace | – | 🟢 | Enable in the per-game patch list. A chase-cam fix pnach exists on the [PCSX2 forums](https://forums.pcsx2.net/Thread-PCSX2-Widescreen-Game-Patches) (2014 attachment) |
 

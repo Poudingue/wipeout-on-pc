@@ -32,12 +32,15 @@
   th { position: sticky; top: 0; background: var(--bg); cursor: pointer; white-space: nowrap; }
   td.nowrap { white-space: nowrap; }
   td a { color: inherit; }
+  .colbar { margin-bottom: .6rem; }
+  .colbar .chip:not(.on) { opacity: .55; }
   code { font-size: .9em; background: var(--chip); padding: 0 .25em; border-radius: .2em; }
 </style>
 </head>
 <body>
 <h1>wipeout-on-pc</h1>
-<p class="sub">Filterable view of <a href="README.md">README.md</a> and the category files. Click chips to filter, click a header to sort, hover any emoji for its meaning.</p>
+<p class="sub">Filterable view of <a href="README.md">README.md</a> and the category files. Click chips to filter, click a header to sort, hover any emoji for its meaning. Toggle columns to show more detail.</p>
+<div class="group colbar" id="colbar"><b>Columns</b></div>
 <details class="legend" id="legend" open><summary>Legend</summary><div class="cols"></div></details>
 <div class="filters" id="filters"></div>
 <div class="wrap"><table id="t"><thead></thead><tbody></tbody></table></div>
@@ -91,6 +94,29 @@ const LEGEND = {
   ],
 };
 const COLOUR_SCOPE = { Legal: 'Legal exposure' };
+
+// Column visibility: legend blocks and filter groups follow the column they describe.
+const LEGEND_COL = { 'Legal exposure': 'Legal', Signals: 'Signals', Approach: 'Details', 'Helper type': 'Details', Parity: 'Parity', Play: 'Play' };
+const FACET_COL = { Play: 'Play', Category: 'Category', Approach: 'Details', Parity: 'Parity', AI: 'Signals', Legal: 'Legal' };
+const DEFAULT_HIDDEN = ['Category', 'Parity', 'Signals', 'Notes'];
+let hidden;
+try { hidden = new Set(JSON.parse(localStorage.getItem('wo-hidden')) || DEFAULT_HIDDEN); } catch { hidden = new Set(DEFAULT_HIDDEN); }
+const saveHidden = () => { try { localStorage.setItem('wo-hidden', JSON.stringify([...hidden])); } catch {} };
+function applyVisibility() {
+  document.querySelectorAll('#legend [data-col]').forEach(el => el.hidden = hidden.has(el.dataset.col));
+  document.querySelectorAll('#filters [data-col]').forEach(el => el.hidden = hidden.has(el.dataset.col));
+  for (const [f, c] of Object.entries(FACET_COL)) if (hidden.has(c) && active[f]?.size) {
+    active[f].clear(); document.querySelectorAll(`#filters [data-facet="${f}"] .chip.on`).forEach(ch => ch.classList.remove('on'));
+  }
+}
+function buildColbar() {
+  const bar = document.getElementById('colbar');
+  for (const c of COLS) {
+    const ch = document.createElement('span'); ch.className = 'chip' + (hidden.has(c) ? '' : ' on'); ch.textContent = c;
+    ch.onclick = () => { hidden.has(c) ? hidden.delete(c) : hidden.add(c); ch.classList.toggle('on'); saveHidden(); applyVisibility(); render(); };
+    bar.appendChild(ch);
+  }
+}
 const MEANING = {};
 for (const [facet, items] of Object.entries(LEGEND)) for (const [e, m] of items) {
   const key = e.replace('️', '');
@@ -114,7 +140,7 @@ const md = (s, scope) => tip(s
 function buildLegend() {
   const box = document.querySelector('#legend .cols');
   box.innerHTML = Object.entries(LEGEND).map(([facet, items]) =>
-    `<div><h3>${facet}</h3><ul>${items.map(([e, m]) => `<li><span>${e}</span>${m}</li>`).join('')}</ul></div>`).join('');
+    `<div${LEGEND_COL[facet] ? ` data-col="${LEGEND_COL[facet]}"` : ''}><h3>${facet}</h3><ul>${items.map(([e, m]) => `<li><span>${e}</span>${m}</li>`).join('')}</ul></div>`).join('');
 }
 
 function parse(file, text) {
@@ -183,7 +209,7 @@ function buildFilters() {
     if (vals.length < 2) continue;
     active[name] = new Set();
     const g = document.createElement('div'); g.className = 'group';
-    g.innerHTML = `<b>${name}</b>`;
+    g.innerHTML = `<b>${name}</b>`; g.dataset.facet = name; if (FACET_COL[name]) g.dataset.col = FACET_COL[name];
     for (const v of vals) {
       const c = document.createElement('span'); c.className = 'chip'; c.textContent = v;
       const t = meaning(v, COLOUR_SCOPE[name] || name); if (t) c.title = t;
@@ -204,15 +230,16 @@ function render() {
   const gameRank = r => GAME_ORDER.indexOf(r.Games[0]) + 1 || 99;  // primary game, chronological
   const cmp = sortKey === 'Game' ? (a, b) => gameRank(a) - gameRank(b) || a.Game.localeCompare(b.Game) : (a, b) => a[sortKey].localeCompare(b[sortKey]);
   if (sortKey) out = [...out].sort((a, b) => sortDir * cmp(a, b));
-  document.querySelector('#t thead').innerHTML = '<tr>' + COLS.map(c => `<th data-k="${c}">${c}${sortKey === c ? (sortDir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('') + '</tr>';
+  const cols = COLS.filter(c => !hidden.has(c));
+  document.querySelector('#t thead').innerHTML = '<tr>' + cols.map(c => `<th data-k="${c}">${c}${sortKey === c ? (sortDir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('') + '</tr>';
   document.querySelectorAll('#t th').forEach(th => th.onclick = () => { const k = th.dataset.k; sortDir = sortKey === k ? -sortDir : 1; sortKey = k; render(); });
-  document.querySelector('#t tbody').innerHTML = out.map(r => '<tr>' + COLS.map(c =>
+  document.querySelector('#t tbody').innerHTML = out.map(r => '<tr>' + cols.map(c =>
     `<td class="${['Play', 'Signals', 'Legal', 'Parity', 'Category'].includes(c) ? 'nowrap' : ''}">${md(r[c], COLOUR_SCOPE[c] || c)}</td>`).join('') + '</tr>').join('');
   document.getElementById('count').textContent = `${out.length} / ${rows.length}`;
 }
 
 Promise.all(FILES.map(f => fetch(f).then(r => { if (!r.ok) throw new Error(f + ' ' + r.status); return r.text(); }).then(t => parse(f, t))))
-  .then(all => { rows = all.flat(); buildLegend(); buildFilters(); render(); })
+  .then(all => { rows = all.flat(); buildColbar(); buildLegend(); buildFilters(); applyVisibility(); render(); })
   .catch(e => { document.body.insertAdjacentHTML('beforeend', `<p>Failed to load: ${e.message}. Serve over HTTP, file:// blocks fetch.</p>`); });
 </script>
 </body>

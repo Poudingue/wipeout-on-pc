@@ -14,7 +14,7 @@ One game per project. Legend in [README.md](README.md#legend).
 
 - *rewrite*: hand-written reimplementation of the engine
 - *decomp*: matching decompilation to C
-- *recomp*: static recompilation of the PS1/PSP executable to native code ([psxrecomp](https://github.com/mstan/psxrecomp) ecosystem)
+- *recomp*: static recompilation of the PS1/PSP executable to native code ([psxrecomp](https://github.com/mstan/psxrecomp) ecosystem)🤖
 - *native-runtime*: the PS4 x86-64 binary runs on the host CPU with a replacement system library layer
 
 ## WipEout (1995, PS1 / PC)
@@ -29,10 +29,10 @@ One game per project. Legend in [README.md](README.md#legend).
 Ports of wipeout-rewrite, same legal status as upstream (signals after each link):
 [Dreamcast](https://github.com/jnmartin84/wipeout-dc) 🕒🏷️ ·
 [Saturn](https://github.com/FCare/WipeoutSaturn) – ·
-[Switch homebrew](https://github.com/emuman100/wipeout-rewrite-nintendo-switch-homebrew) 🕒 ·
+[Switch homebrew](https://github.com/emuman100/wipeout-rewrite-nintendo-switch-homebrew) 🕒🤖 ·
 [Playdate](https://github.com/pastasfuture/PastaWipeoutPD) – ·
-[Quest / PICO VR](https://github.com/SgtBilko76/Wipeout-Rewrite-VR) 🕒👥🏷️ ·
-[Steam Frame VR](https://github.com/astromaddie/wipeout-vr) 🕒👥🏷️🧪 ·
+[Quest / PICO VR](https://github.com/SgtBilko76/Wipeout-Rewrite-VR) 🕒👥🏷️🤖 ·
+[Steam Frame VR](https://github.com/astromaddie/wipeout-vr) 🕒👥🏷️🧪🤖 ·
 [Flatpak](https://github.com/leuc/org.phoboslab.wipeout) 🕒🏷️⚙️ ·
 [AppImage](https://github.com/pkgforge-dev/wipEout-Rewrite-AppImage) 🕒👥🏷️⚙️📜
 
@@ -40,8 +40,8 @@ Ports of wipeout-rewrite, same legal status as upstream (signals after each link
 
 | Project | Approach | Parity | Signals | Legal | Notes |
 |---------|----------|--------|----------|-------|-------|
-| [Yash-Singh1/wipeout-xl-decomp](https://github.com/Yash-Singh1/wipeout-xl-decomp) | 🔬 decomp | 🎯 byte-exact | 🕒 | 🟡 orig-code | Rebuilds US, EU and JP executables with the original compiler. Partial decomp of the PC release too. PsyQ libs taken from retail exe as asm |
-| [Yash-Singh1/wipeout-xl-rewrite](https://github.com/Yash-Singh1/wipeout-xl-rewrite) | 🖊️ rewrite built on the decomp | ✨ enhanced, lockstep-tested against recordings | 🕒🏷️🧪 | 🟡 orig-code | HD, widescreen, uncapped fps, split-screen, loads WipEout 1 and Wipeout 64 tracks, custom music. Win/mac/web/iOS. Point it at your `.cue` |
+| [Yash-Singh1/wipeout-xl-decomp](https://github.com/Yash-Singh1/wipeout-xl-decomp) | 🔬 decomp | 🎯 byte-exact | 🕒🤖 | 🟡 orig-code | Rebuilds US, EU and JP executables with the original compiler. Partial decomp of the PC release too. PsyQ libs taken from retail exe as asm |
+| [Yash-Singh1/wipeout-xl-rewrite](https://github.com/Yash-Singh1/wipeout-xl-rewrite) | 🖊️ rewrite built on the decomp | ✨ enhanced, lockstep-tested against recordings | 🕒🏷️🧪🤖 | 🟡 orig-code | HD, widescreen, uncapped fps, split-screen, loads WipEout 1 and Wipeout 64 tracks, custom music. Win/mac/web/iOS. Point it at your `.cue` |
 | [NJH-1001/Wipeout2K97XL](https://github.com/NJH-1001/Wipeout2K97XL) | 🔁 recomp, setup kit | ✅ behaviour-exact | 🕒🏷️⚙️🧪 | 🟡 orig-code | USA SCUS-94351, 12-track Redump cue. Win/Linux/mac, OpenBIOS + SDL3, Steam Deck tested |
 | [alexbeavs-ps1-ports/wipeout-xl-recomp](https://github.com/alexbeavs-ps1-ports/wipeout-xl-recomp) | 🔁 recomp | ✅ behaviour-exact | 🕒🏷️⚙️🧪 | 🟡 orig-code | Release candidate, needs retail BIOS |
 
@@ -49,7 +49,7 @@ Ports of wipeout-rewrite, same legal status as upstream (signals after each link
 
 | Project | Approach | Parity | Signals | Legal | Notes |
 |---------|----------|--------|----------|-------|-------|
-| [RetroPortingToolKit/Wipeout-3-Special-Edition-Recomp](https://github.com/RetroPortingToolKit/Wipeout-3-Special-Edition-Recomp) | 🔁 recomp | ✅ behaviour-exact | 🕒👥⚙️ | 🟡 orig-code | WIP, no release builds yet |
+| [RetroPortingToolKit/Wipeout-3-Special-Edition-Recomp](https://github.com/RetroPortingToolKit/Wipeout-3-Special-Edition-Recomp) | 🔁 recomp | ✅ behaviour-exact | 🕒👥⚙️🤖 | 🟡 orig-code | WIP, no release builds yet |
 
 No rewrite or decomp found for Wip3out. Gap.
 
@@ -61,7 +61,7 @@ Nothing beyond emulation. See [emulator-helpers.md](emulator-helpers.md) and [to
 
 | Project | Approach | Parity | Signals | Legal | Notes |
 |---------|----------|--------|----------|-------|-------|
-| [erreib/pure-recomp](https://github.com/erreib/pure-recomp) | 🔁 recomp, Metal (macOS) / Vulkan (Windows) | ✅ behaviour-exact | 🕒🏷️📜 | 🟡 orig-code | GPL-2.0. Requires UCUS-98612 v2.00 dump, refuses other editions. Apple Silicon or Win x64 |
+| [erreib/pure-recomp](https://github.com/erreib/pure-recomp) | 🔁 recomp, Metal (macOS) / Vulkan (Windows) | ✅ behaviour-exact | 🕒🏷️📜🤖 | 🟡 orig-code | GPL-2.0. Requires UCUS-98612 v2.00 dump, refuses other editions. Apple Silicon or Win x64 |
 
 No Pulse port found. Gap.
 
@@ -74,7 +74,7 @@ Emulation only. Gap.
 | Project | Approach | Parity | Signals | Legal | Notes |
 |---------|----------|--------|----------|-------|-------|
 | [AbdelmoumenDeghbouche/wipeout_pc](https://github.com/AbdelmoumenDeghbouche/wipeout_pc) | 🧬 native-runtime, shadPS4 video core | ✅ behaviour-exact | 🕒👥🏷️⚙️🧪📜 | 🟡 orig-code | GPL-2.0, early. Menus and HD/2048 races above 60 fps, sound unfinished. Needs your PKG dump (`eboot.bin` folder). Same model as bloodborne_pc |
-| [jshodanVR/revive-psvr1-wipeout](https://github.com/jshodanVR/revive-psvr1-wipeout) | 🧬 native-runtime, OpenXR output | ✅ behaviour-exact | 🕒🏷️🧪📜 | 🟡 orig-code | GPL-2.0. Base CUSA05670 + 1.07 update PKG. Experimental, visual glitches on some tracks |
+| [jshodanVR/revive-psvr1-wipeout](https://github.com/jshodanVR/revive-psvr1-wipeout) | 🧬 native-runtime, OpenXR output | ✅ behaviour-exact | 🕒🏷️🧪📜🤖 | 🟡 orig-code | GPL-2.0. Base CUSA05670 + 1.07 update PKG. Experimental, visual glitches on some tracks |
 
 ## Open-source spiritual successors (not WipEout code)
 
