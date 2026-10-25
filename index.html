@@ -11,6 +11,14 @@
   h1 { font-size: 1.3rem; margin: 0 0 .25rem; }
   p.sub { margin: 0 0 1rem; color: var(--muted); }
   p.sub a { color: inherit; }
+  .legend { border: 1px solid var(--line); border-radius: .4rem; padding: .4rem .8rem; margin-bottom: 1rem; }
+  .legend summary { cursor: pointer; font-weight: 600; }
+  .legend .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: .5rem 1.5rem; margin-top: .5rem; }
+  .legend h3 { font-size: .85rem; margin: .3rem 0 .2rem; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; }
+  .legend ul { list-style: none; margin: 0; padding: 0; }
+  .legend li { margin: .1rem 0; }
+  .legend li span:first-child { display: inline-block; width: 1.6rem; }
+  [title] { cursor: help; }
   .filters { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; margin-bottom: 1rem; }
   .group { display: flex; flex-wrap: wrap; gap: .25rem; align-items: center; }
   .group b { margin-right: .25rem; color: var(--muted); font-weight: 600; }
@@ -29,7 +37,8 @@
 </head>
 <body>
 <h1>wipeout-on-pc</h1>
-<p class="sub">Filterable view of <a href="README.md">README.md</a> and the category files. Legend is in the README. Click chips to filter, click a header to sort.</p>
+<p class="sub">Filterable view of <a href="README.md">README.md</a> and the category files. Click chips to filter, click a header to sort, hover any emoji for its meaning.</p>
+<details class="legend" id="legend" open><summary>Legend</summary><div class="cols"></div></details>
 <div class="filters" id="filters"></div>
 <div class="wrap"><table id="t"><thead></thead><tbody></tbody></table></div>
 
@@ -39,10 +48,74 @@ const DETAIL_COLS = ['Approach', 'Type', 'What', 'Engine', 'Covers'];
 const COLS = ['Category', 'Game', 'Project', 'Details', 'Parity', 'Health', 'Legal', 'Notes'];
 const EMOJI = /^(\p{Extended_Pictographic}|\p{Emoji_Presentation})(️)?/u;
 
-const md = s => s
+// Legend: facet -> [emoji, meaning]. Health grade and Legal share colours, so each is scoped to its column.
+const LEGEND = {
+  'Legal exposure': [
+    ['🟢', 'Low: nothing of Sony\'s distributed or executed'],
+    ['🟡', 'Moderate: executes Sony code from your own dump, distributes nothing'],
+    ['🟠', 'Grey: redistributes transformed Sony material (leaked-source derivative, upscaled textures)'],
+    ['🔴', 'High: redistributes Sony material as is (ISO, DLC, assets)'],
+  ],
+  'Health grade': [
+    ['🟢', '4 to 6 badges'],
+    ['🟡', '2 or 3 badges'],
+    ['🔴', '0 or 1 badge'],
+  ],
+  'Health badges': [
+    ['🕒', 'Pushed within the last 12 months'],
+    ['👥', 'At least 3 contributors'],
+    ['🚀', 'Tagged releases'],
+    ['🤖', 'CI (GitHub Actions)'],
+    ['🧪', 'Test suite present'],
+    ['📜', 'Explicit SPDX licence'],
+  ],
+  'Approach': [
+    ['🖊️', 'Rewrite: hand-written reimplementation'],
+    ['🔬', 'Decompilation: matching C source'],
+    ['🔁', 'Static recompilation of the original executable'],
+    ['🧬', 'Native runtime: PS4 binary runs on the host CPU'],
+    ['🍴', 'Fork of another listed project'],
+    ['👁️', 'Viewer'],
+  ],
+  'Parity': [
+    ['🎯', 'Byte-exact rebuild of the original executable'],
+    ['✅', 'Behaviour-exact: original code executes'],
+    ['✨', 'Enhanced: behaviour deliberately changed'],
+  ],
+  'Helper type': [
+    ['🩹', 'Cheat code, memory patch or pnach'],
+    ['🖼️', 'Texture pack'],
+    ['💿', 'ISO patch (xdelta)'],
+    ['📖', 'How-to'],
+    ['🧰', 'Misc tool'],
+  ],
+};
+const COLOUR_SCOPE = { Legal: 'Legal exposure', Health: 'Health grade' };
+const MEANING = {};
+for (const [facet, items] of Object.entries(LEGEND)) for (const [e, m] of items) {
+  const key = e.replace('️', '');
+  (MEANING[key] ||= {})[facet] = m;
+}
+const meaning = (e, scope) => {
+  const m = MEANING[e.replace('️', '')];
+  if (!m) return '';
+  if (m[scope]) return m[scope];
+  const entries = Object.entries(m);
+  return entries.length === 1 ? entries[0][1] : entries.map(([f, t]) => `${f}: ${t}`).join('\n');
+};
+const ANY_EMOJI = /(\p{Extended_Pictographic}|\p{Emoji_Presentation})️?/gu;
+const tip = (s, scope) => s.replace(ANY_EMOJI, e => { const t = meaning(e, scope); return t ? `<span title="${t.replace(/"/g, '&quot;')}">${e}</span>` : e; });
+
+const md = (s, scope) => tip(s
   .replace(/`([^`]+)`/g, '<code>$1</code>')
   .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
-  .replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  .replace(/\*([^*]+)\*/g, '<em>$1</em>'), scope);
+
+function buildLegend() {
+  const box = document.querySelector('#legend .cols');
+  box.innerHTML = Object.entries(LEGEND).map(([facet, items]) =>
+    `<div><h3>${facet}</h3><ul>${items.map(([e, m]) => `<li><span>${e}</span>${m}</li>`).join('')}</ul></div>`).join('');
+}
 
 function parse(file, text) {
   const rows = [];
@@ -56,9 +129,10 @@ function parse(file, text) {
     if (!header.includes('Legal')) continue;
     const get = name => { const i = header.indexOf(name); return i >= 0 ? cells[i] || '' : ''; };
     const details = DETAIL_COLS.filter(c => header.includes(c)).map(get).filter(Boolean).join(' · ');
+    const gs = games(get('Game') || section);
     rows.push({
       Category: file.replace('.md', ''),
-      Game: get('Game') || section.replace(/\s*\(.*$/, ''),
+      Game: gs.join(', '), Games: gs,
       Project: get('Project'), Details: details, Parity: get('Parity'),
       Health: get('Health'), Legal: get('Legal'), Notes: get('Notes'),
     });
@@ -66,10 +140,30 @@ function parse(file, text) {
   return rows;
 }
 
+// Canonical game names. A row may match several (e.g. "Pure, Pulse", "all PSP").
+const GAMES = [
+  ['2097 / XL', /2097|\bXL\b/i],
+  ['Wip3out', /wip3out|wipeout 3\b/i],
+  ['Fusion', /fusion/i],
+  ['Pure', /\bpure\b|all PSP/i],
+  ['Pulse', /\bpulse\b|all PSP/i],
+  ['HD / Fury', /\bHD\b|fury/i],
+  ['2048', /2048/],
+  ['Omega Collection', /omega/i],
+  ['Cross-series', /cross-series|PSX to PS5|\ball\b(?! PSP)/i],
+  ['Successors', /successors/i],
+  ['Infrastructure', /infrastructure/i],
+];
+const GAME_ORDER = ['WipEout (1995)', ...GAMES.map(([n]) => n)];  // chronological, then cross-cutting
+function games(text) {
+  const out = GAMES.filter(([, re]) => re.test(text)).map(([n]) => n);
+  return out.length ? out : (/wipeout|WO1/i.test(text) ? ['WipEout (1995)'] : [text]);
+}
+
 const firstEmoji = s => (s.match(EMOJI) || [''])[0].replace('️', '');
 const FACETS = {
   Category: r => r.Category,
-  Game: r => r.Game,
+  Game: r => r.Games,
   Approach: r => firstEmoji(r.Details),
   Parity: r => firstEmoji(r.Parity),
   Health: r => firstEmoji(r.Health),
@@ -80,13 +174,15 @@ const active = {}; let rows = [], sortKey = null, sortDir = 1, q = '';
 function buildFilters() {
   const box = document.getElementById('filters');
   for (const [name, fn] of Object.entries(FACETS)) {
-    const vals = [...new Set(rows.map(fn).filter(Boolean))].sort();
+    const vals = [...new Set(rows.flatMap(fn).filter(Boolean))].sort();
+    if (name === 'Game') vals.sort((a, b) => (GAME_ORDER.indexOf(a) + 1 || 99) - (GAME_ORDER.indexOf(b) + 1 || 99));
     if (vals.length < 2) continue;
     active[name] = new Set();
     const g = document.createElement('div'); g.className = 'group';
     g.innerHTML = `<b>${name}</b>`;
     for (const v of vals) {
       const c = document.createElement('span'); c.className = 'chip'; c.textContent = v;
+      const t = meaning(v, COLOUR_SCOPE[name] || name); if (t) c.title = t;
       c.onclick = () => { active[name].has(v) ? active[name].delete(v) : active[name].add(v); c.classList.toggle('on'); render(); };
       g.appendChild(c);
     }
@@ -99,18 +195,18 @@ function buildFilters() {
 }
 
 function render() {
-  let out = rows.filter(r => Object.entries(active).every(([k, set]) => !set.size || set.has(FACETS[k](r))));
+  let out = rows.filter(r => Object.entries(active).every(([k, set]) => !set.size || [FACETS[k](r)].flat().some(v => set.has(v))));
   if (q) out = out.filter(r => COLS.map(c => r[c]).join(' ').toLowerCase().includes(q));
   if (sortKey) out = [...out].sort((a, b) => sortDir * a[sortKey].localeCompare(b[sortKey]));
   document.querySelector('#t thead').innerHTML = '<tr>' + COLS.map(c => `<th data-k="${c}">${c}${sortKey === c ? (sortDir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('') + '</tr>';
   document.querySelectorAll('#t th').forEach(th => th.onclick = () => { const k = th.dataset.k; sortDir = sortKey === k ? -sortDir : 1; sortKey = k; render(); });
   document.querySelector('#t tbody').innerHTML = out.map(r => '<tr>' + COLS.map(c =>
-    `<td class="${['Health', 'Legal', 'Parity', 'Category'].includes(c) ? 'nowrap' : ''}">${md(r[c])}</td>`).join('') + '</tr>').join('');
+    `<td class="${['Health', 'Legal', 'Parity', 'Category'].includes(c) ? 'nowrap' : ''}">${md(r[c], COLOUR_SCOPE[c] || c)}</td>`).join('') + '</tr>').join('');
   document.getElementById('count').textContent = `${out.length} / ${rows.length}`;
 }
 
 Promise.all(FILES.map(f => fetch(f).then(r => { if (!r.ok) throw new Error(f + ' ' + r.status); return r.text(); }).then(t => parse(f, t))))
-  .then(all => { rows = all.flat(); buildFilters(); render(); })
+  .then(all => { rows = all.flat(); buildLegend(); buildFilters(); render(); })
   .catch(e => { document.body.insertAdjacentHTML('beforeend', `<p>Failed to load: ${e.message}. Serve over HTTP, file:// blocks fetch.</p>`); });
 </script>
 </body>
